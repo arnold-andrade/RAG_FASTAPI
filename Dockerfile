@@ -1,9 +1,15 @@
-FROM python:3
+FROM python:3.11-slim
 
-# Install required packages (optional - based on what your main.py needs)
-# RUN pip install -r requirements.txt
+WORKDIR /app
 
+# Copy requirements file from datafile directory and install dependencies
+COPY datafile/requirement.txt ./requirement.txt
+RUN pip install --no-cache-dir -r requirement.txt
+
+# Copy the rest of the code
 COPY . .
 
-# Run the Python script
-CMD ["python", "datafile/main.py"]
+EXPOSE 8000
+
+# Start FastAPI app (update the path if your FastAPI app is not datafile/main.py:app)
+CMD ["uvicorn", "datafile.main:app", "--host", "0.0.0.0", "--port", "8000"]

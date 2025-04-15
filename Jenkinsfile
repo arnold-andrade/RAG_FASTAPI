@@ -1,10 +1,8 @@
 pipeline {
     agent any
-
     environment {
-        DOCKER_IMAGE = "yourdockerhubusername/rag_fastapi:latest"
+        DOCKER_IMAGE = "arnold-andrade/rag_fastapi:latest"
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -18,23 +16,13 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
+        stage('Deploy') {
             steps {
-                sh 'pip install -r datafile/requirement.txt'
-                sh 'pytest || echo "No tests found"'
-            }
-        }
-        stage('Push Docker Image') {
-            when {
-                branch 'main'
-            }
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
-                    sh 'echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin'
-                    sh "docker push ${DOCKER_IMAGE}"
+                script {
+                    sh 'docker rm -f rag_fastapi || true'
+                    sh 'docker run -d --name rag_fastapi -p 8000:8000 arnold-andrade/rag_fastapi:latest'
                 }
             }
         }
-        // Optional: Add deploy stage here
     }
 }
