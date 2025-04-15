@@ -1,0 +1,6 @@
+google-auth
+requests
+python-dotenv
+google-cloud-bigquery
+dotenv
+PyPDF2
