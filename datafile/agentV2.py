@@ -7,7 +7,7 @@ from vectorSearch import get_content_from_bigquery
 from langchain_google_vertexai import VertexAI
 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "carbon-beanbag-452610-q6-53b220c17831.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv["GOOGLE_APPLICATION_CREDENTIALS"]
 aiplatform.init(project="carbon-beanbag-452610-q6")
 
 llm = VertexAI(model_name="gemini-2.0-flash")
