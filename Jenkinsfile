@@ -1,26 +1,21 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = "arnold-andrade/rag_fastapi:latest"
+        DOCKER_IMAGE = "arnoldandrade/rag_fastapi:latest"
+        CONTAINER_NAME = "rag_fastapi"
+        HOST_PORT = "8000"
+        CONTAINER_PORT = "8000"
     }
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build("${DOCKER_IMAGE}")
-                }
-            }
-        }
         stage('Deploy') {
             steps {
                 script {
-                    sh 'docker rm -f rag_fastapi || true'
-                    sh 'docker run -d --name rag_fastapi -p 8000:8000 arnold-andrade/rag_fastapi:latest'
+                    // Pull the latest image from Docker Hub
+                    sh "docker pull ${DOCKER_IMAGE}"
+                    // Stop and remove any running container with the same name
+                    sh "docker rm -f ${CONTAINER_NAME} || true"
+                    // Run the new container
+                    sh "docker run -d --name ${CONTAINER_NAME} -p ${HOST_PORT}:${CONTAINER_PORT} ${DOCKER_IMAGE}"
                 }
             }
         }
